@@ -4,10 +4,8 @@
 
 import { Scene } from 'phaser';
 
-export class Game extends Scene
-{
-    constructor ()
-    {
+export class Game extends Scene {
+    constructor() {
         super('Game');
     }
 
@@ -24,29 +22,22 @@ export class Game extends Scene
         graphics.setInteractive(hitArea, Phaser.Geom.Polygon.Contains);
     }
 
-    draw_button(graphics, x, y, radius, color, start_rad, end_rad){
-        /* Limpia el objeto graphics para eliminar el anterior botón */
+    draw_button(graphics, x, y, inner_radius, outer_radius, color, start_rad, end_rad) {
         graphics.clear();
-
-        /* Establece que el botón se rellenará con un color */
+        
         graphics.fillStyle(color, 1);
 
-        /* Dibuja un botón como triangulo curvo 
-            Dibuja una porción de círculo partiendo del centro (x, y), trazando una línea recta hasta el borde del círculo según el radius, luego un arco curvo desde startAngle hasta endAngle, y finalmente cerrando la forma con otra línea recta de regreso al centro.
+        graphics.beginPath();
+        graphics.moveTo(x, y);
+        graphics.arc(x, y, outer_radius, start_rad, end_rad, false);
+        graphics.lineTo(x + Math.cos(end_rad) * inner_radius, y + Math.sin(end_rad) * inner_radius);
+        graphics.arc(x, y, inner_radius, end_rad, start_rad, true); 
+        graphics.closePath();
 
-            x, y: Coordenadas del centro del botón
-            radius: Radio del botón
-            Phaser.Math.DegToRad(90 * i): Angulo de inicio del botón
-            Phaser.Math.DegToRad(90 * (i + 1)): Angulo de final del botón
-            false: Si se dibuja en el sentido de las agujas del reloj o en sentido contrario
-        */
-        graphics.slice(x, y, radius, start_rad, end_rad, false);
-
-        /* Rellena el botón con el color establecido */
         graphics.fillPath();
     }
 
-    draw_board(centerX, centerY, button_radius){
+    draw_board(centerX, centerY, button_inner_radius, button_outer_radius) {
         /* Establece el color de fondo */
         this.cameras.main.setBackgroundColor(0xeeeeee);
 
@@ -93,7 +84,7 @@ export class Game extends Scene
         ]
 
         /* Bucle para dibujar los botones, se ejecuta 4 veces (una por botón) */
-        for (let i=0; i < this.buttons.length; i++){            
+        for (let i = 0; i < this.buttons.length; i++) {
             /* Crea un objeto graphics, necesario para dibujar botones */
             let button_graphics = this.add.graphics();
 
@@ -103,46 +94,28 @@ export class Game extends Scene
             let end_rad = this.buttons[i]['end_rad'];
 
             /* Dibuja el botón */
-            this.draw_button(button_graphics, centerX, centerY, button_radius, base_color, start_rad, end_rad);
-
-            /* Crea un area clicable para el botón */
-            this.create_button_hitbox(button_graphics, centerX, centerY, button_radius, start_rad, end_rad);
+            this.draw_button(button_graphics, centerX, centerY, button_inner_radius, button_outer_radius, base_color, start_rad, end_rad);
 
             /* Añade el boton al array para poder usarlo posteriormente */
             this.buttons[i]['graphics'] = button_graphics;
         }
     }
 
-    create ()
-    {
+    create() {
         /* Centro horizontal del canva */
         let centerX = this.scale.width / 2;
 
         /* Centro vertical del canva */
         let centerY = this.scale.height / 2;
 
-        /* Calcula el radio de los botones en base a la altura del canva */
-        let button_radius = this.scale.height / 2.5;
+        /* Calcula el radio interior de los botones en base a la altura del canva */
+        let button_inner_radius = this.scale.width / 3.5;
 
+        /* Calcula el radio exterior de los botones en base a la altura del canva */
+        let button_outer_radius = this.scale.width / 8;
 
         /* Dibuja el tablero */
-        this.draw_board(centerX, centerY, button_radius);
-
-        
-        for(let button of this.buttons){
-            button['graphics'].on('pointerdown', () => {
-                let graphics = button['graphics'];
-                let base_color = button['base_color'];
-                let bright_color = button['bright_color'];
-                let start_rad = button['start_rad'];
-                let end_rad = button['end_rad'];
-
-                this.draw_button(graphics, centerX, centerY, button_radius, bright_color, start_rad, end_rad);
-
-                this.time.delayedCall(1000, this.draw_button, [graphics, centerX, centerY, button_radius, base_color, start_rad, end_rad], this);
-                this.time.delayedCall(1000, this.create_button_hitbox, [graphics, centerX, centerY, button_radius, start_rad, end_rad], this);
-            });
-        }
+        this.draw_board(centerX, centerY, button_inner_radius, button_outer_radius);
     }
 
 
