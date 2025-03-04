@@ -34,25 +34,29 @@ export class Game extends Scene {
                 base_color: 0x880000,
                 bright_color: 0xff0000,
                 start_rad: rad_0,
-                end_rad: rad_90
+                end_rad: rad_90,
+                sound: this.sound.add('red_sound')
             },
             {
                 base_color: 0x008800,
                 bright_color: 0x00ff00,
                 start_rad: rad_90,
-                end_rad: rad_180
+                end_rad: rad_180,
+                sound: this.sound.add('green_sound')
             },
             {
                 base_color: 0x000088,
                 bright_color: 0x0000ff,
                 start_rad: rad_180,
-                end_rad: rad_270
+                end_rad: rad_270,
+                sound: this.sound.add('blue_sound')
             },
             {
                 base_color: 0x888800,
                 bright_color: 0xffff00,
                 start_rad: rad_270,
-                end_rad: rad_360
+                end_rad: rad_360,
+                sound: this.sound.add('yellow_sound')
             }
         ];
     }
@@ -113,14 +117,14 @@ export class Game extends Scene {
             let bright_color = this.buttons[i]['bright_color'];
             let start_rad = this.buttons[i]['start_rad'];
             let end_rad = this.buttons[i]['end_rad'];
-            let button_name = this.buttons[i]['name'];
+            let sound = this.buttons[i]['sound'];
 
             /* Dibuja el botón */
             this.draw_button(button_graphics, button_x, button_y, button_inner_radius, button_outer_radius, base_color, start_rad, end_rad);
 
             /* Crea un evento para cambiar el color del botón cuando se pulsa */
             button_graphics.on('pointerdown', () => {
-                this.click_button(i, button_graphics, base_color, bright_color);
+                this.click_button(i, button_graphics, base_color, bright_color, sound);
             });
         }
 
@@ -182,7 +186,7 @@ export class Game extends Scene {
         }
     }
 
-    click_button(pressed_button, graphics, base_color, bright_color){
+    click_button(pressed_button, graphics, base_color, bright_color, sound){
         /* Si no es el turno del usuario, no se puede pulsar el botón */
         if (!this.player_turn) return;
 
@@ -191,6 +195,9 @@ export class Game extends Scene {
 
         /* Crea el efecto de iluminado en el botón */
         this.enlighten_button(graphics, base_color, bright_color);
+
+        /* Reproduce el sonido del botón pulsado */
+        sound.play();
 
         /* Coge el indice para comprobar la posición del botón en la secuencia */
         let pressed_index = this.player_pressed.length

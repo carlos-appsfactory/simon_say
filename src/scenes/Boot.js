@@ -17,6 +17,11 @@ export class Boot extends Scene
         //  The smaller the file size of the assets, the better, as the Boot Scene itself has no preloader.
 
         this.load.image('background', 'assets/bg.png');
+
+        this.load.audio('red_sound', 'assets/red_sound.mp3')
+        this.load.audio('green_sound', 'assets/green_sound.mp3')
+        this.load.audio('blue_sound', 'assets/blue_sound.mp3')
+        this.load.audio('yellow_sound', 'assets/yellow_sound.mp3')
     }
 
     create ()
