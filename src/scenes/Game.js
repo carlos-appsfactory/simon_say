@@ -171,7 +171,9 @@ export class Game extends Scene {
                     let graphics = pressed_button['graphics'];
                     let base_color = pressed_button['base_color'];
                     let bright_color = pressed_button['bright_color'];
-                    this.enlighten_button(graphics, base_color, bright_color);
+                    let sound = pressed_button['sound'];
+
+                    this.enlighten_button(graphics, base_color, bright_color, sound);
 
                     /* Aumenta el contador para leer el siguiente botón en la próxima iteración */
                     counter++;
@@ -194,10 +196,7 @@ export class Game extends Scene {
         this.player_turn = false;
 
         /* Crea el efecto de iluminado en el botón */
-        this.enlighten_button(graphics, base_color, bright_color);
-
-        /* Reproduce el sonido del botón pulsado */
-        sound.play();
+        this.enlighten_button(graphics, base_color, bright_color, sound);
 
         /* Coge el indice para comprobar la posición del botón en la secuencia */
         let pressed_index = this.player_pressed.length
@@ -287,10 +286,13 @@ export class Game extends Scene {
         graphics.setInteractive(interactive_shape, Phaser.Geom.Polygon.Contains);
     }
 
-    enlighten_button(graphics, base_color, bright_color){
+    enlighten_button(graphics, base_color, bright_color, sound){
         /* Pinta la figura del color brillante */
         graphics.fillStyle(bright_color, 1); 
         graphics.fillPath();
+
+        /* Reproduce el sonido del botón pulsado */
+        sound.play();
 
         /* Espera un segundo antes de continuar */
         this.time.delayedCall(1000, () => {
@@ -299,6 +301,4 @@ export class Game extends Scene {
             graphics.fillPath();
         }, [], this);
     }
-
-    
 }
