@@ -294,11 +294,12 @@ export class Game extends Scene {
         /* Reproduce el sonido del botón pulsado */
         sound.play();
 
-        /* Espera un segundo antes de continuar */
-        this.time.delayedCall(1000, () => {
+        sound.on('complete', () =>{
             /* Vuelve a poner el color base */
             graphics.fillStyle(base_color, 1); 
             graphics.fillPath();
-        }, [], this);
+        });
+
+
     }
 }
